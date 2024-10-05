@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   description: "This is Blog Details Page for Startup Nextjs Template",
   // other metadata
 };
+
 const BlogSidebarPage = () => {
   return (
     <>
@@ -95,7 +96,7 @@ const BlogSidebarPage = () => {
                   </div>
                   <div className="mb-5">
                     <a
-                      href="app/blog-sidebar/new.html"
+                      href="#0"
                       className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white"
                     >
                       Design

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FaUserCircle } from "react-icons/fa"; // Import the user icon
 import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
 
@@ -22,11 +23,13 @@ const Header = () => {
       setSticky(false);
     }
   };
+
   useEffect(() => {
     window.addEventListener("scroll", handleStickyNavbar);
-  });
+    return () => window.removeEventListener("scroll", handleStickyNavbar); // Cleanup on unmount
+  }, []);
 
-  // Submenu handler
+  // submenu handler
   const [openIndex, setOpenIndex] = useState(-1);
   const handleSubmenu = (index) => {
     if (openIndex === index) {
@@ -36,33 +39,18 @@ const Header = () => {
     }
   };
 
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown
   const usePathName = usePathname();
+  
+  // State for the profile image
+  const [profileImage, setProfileImage] = useState('/path/to/default-profile-pic.jpg');
 
-  // User authentication state
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+  const handleDropdownToggle = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
 
-  // Fetch user information (you should replace this with actual authentication logic)
-  useEffect(() => {
-    // Simulate fetching user data
-    const fetchUserData = async () => {
-      // Replace with actual logic
-      const userData = await getUserData();
-      if (userData) {
-        setIsAuthenticated(true);
-        setUser(userData);
-      }
-    };
-    fetchUserData();
-  }, []);
-
-  // Dummy function to simulate fetching user data
-  const getUserData = async () => {
-    // Replace this with actual API call
-    return {
-      name: "Vishal G",
-      image: "/images/blog/author1.png"
-    };
+  const handleMenuItemClick = () => {
+    setDropdownOpen(false); // Close the dropdown on menu item click
   };
 
   return (
@@ -186,38 +174,47 @@ const Header = () => {
                 </nav>
               </div>
               <div className="flex items-center justify-end pr-16 lg:pr-0">
-                {!isAuthenticated ? (
-                  <>
-                    <Link
-                      href="/signin"
-                      className="hidden px-7 py-3 text-base font-medium text-dark hover:opacity-70 dark:text-white md:block"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      href="/signup"
-                      className="ease-in-up shadow-btn hover:shadow-btn-hover hidden rounded-sm bg-primary px-8 py-3 text-base font-medium text-white transition duration-300 hover:bg-opacity-90 md:block md:px-9 lg:px-6 xl:px-9"
-                    >
-                      Sign Up
-                    </Link>
-                  </>
-                ) : (
-                  <div className="flex items-center">
-                    <Image
-                      src={user.image}
-                      alt={user.name}
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
-                    <span className="ml-3 text-base font-medium text-dark dark:text-white">
-                      {user.name}
-                    </span>
-                  </div>
-                )}
-                <div>
-                  <ThemeToggler />
+                <div className="relative">
+                  <FaUserCircle
+                    className={`cursor-pointer text-3xl ${
+                      dropdownOpen ? "text-primary" : "text-black dark:text-white"
+                    }`}
+                    onClick={handleDropdownToggle}
+                  />
+                  {dropdownOpen && (
+                    <div className="absolute right-0 z-50 mt-2 w-40 rounded-md bg-white dark:bg-gray-800 shadow-lg">
+                      <Link
+                        href="/signin"
+                        className="block px-4 py-2 text-base text-dark hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                        onClick={handleMenuItemClick}
+                      >
+                        Sign In
+                      </Link>
+                      <Link
+                        href="/signup"
+                        className="block px-4 py-2 text-base text-dark hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                        onClick={handleMenuItemClick}
+                      >
+                        Sign Up
+                      </Link>
+                      <Link
+                        href="/staff"
+                        className="block px-4 py-2 text-base text-dark hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                        onClick={handleMenuItemClick}
+                      >
+                        Staff Profile
+                      </Link>
+                      <Link
+                        href="/student"
+                        className="block px-4 py-2 text-base text-dark hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                        onClick={handleMenuItemClick}
+                      >
+                        Student Profile
+                      </Link>
+                    </div>
+                  )}
                 </div>
+                <ThemeToggler />
               </div>
             </div>
           </div>
